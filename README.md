@@ -6,7 +6,7 @@ sudo docker compose up
 ```
 
 ```sh
-sudo docker exec -it backend sh
+sudo docker exec -it smart_building_backend sh
 ```
 
 ```sh
