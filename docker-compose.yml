@@ -2,16 +2,17 @@ version: "3.4"
 
 services:
 
-  # frontend:
-  #   container_name: '${APP_NAME}_frontend'
-  #   build:
-  #      context: ../Smartbuilding-Frontend #Change Me!
-  #   ports:
-  #      - "${APP_PORT_FRONT}:80"
-  #   links:
-  #      - php
-  #   depends_on:
-  #      - php
+  frontend:
+    container_name: '${APP_NAME}_frontend'
+    image: nabilbs/smartbuilding-frontend:latest
+    # build:
+    #    context: ../Smartbuilding-Frontend #Change Me!
+    ports:
+       - "${APP_PORT_FRONT}:80"
+    links:
+       - php
+    depends_on:
+       - php
 
   php:
     container_name: '${APP_NAME}_backend'
