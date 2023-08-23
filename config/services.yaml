@@ -1,0 +1,28 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+parameters:
+  foods_directory: '%kernel.project_dir%/public/uploads/foods'
+  incidents_directory: '%kernel.project_dir%/public/uploads/incidents'
+  salles_directory: '%kernel.project_dir%/public/uploads/salles'
+  images_directory: '%kernel.project_dir%/public/images'
+  env(MERCURE_PUBLISH_URL): ""
+  env(MERCURE_JWT_SECRET): ""
+
+services:
+
+  acme.decoder.json:
+    class: FOS\RestBundle\Decoder\JsonDecoder
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  App\:
+    resource: '../src/'
+    exclude:
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Kernel.php'

@@ -1,0 +1,128 @@
+version: "3.4"
+
+services:
+
+  # frontend:
+  #   container_name: '${APP_NAME}_frontend'
+  #   build:
+  #      context: ../Smartbuilding-Frontend #Change Me!
+  #   ports:
+  #      - "${APP_PORT_FRONT}:80"
+  #   links:
+  #      - php
+  #   depends_on:
+  #      - php
+
+  php:
+    container_name: '${APP_NAME}_backend'
+    image: nabilbs/smartbuilding-backend-php:latest
+    # build:
+    #   context: .
+    #   target: app_php
+    #   args:
+    #     SYMFONY_VERSION: ${SYMFONY_VERSION:-}
+    #     STABILITY: ${STABILITY:-stable}
+    restart: unless-stopped
+    volumes:
+      - php_socket:/var/run/php
+    healthcheck:
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    environment:
+      MERCURE_URL: ${MERCURE_URL}
+      MERCURE_PUBLIC_URL: ${MERCURE_PUBLIC_URL}
+      MERCURE_JWT_SECRET: ${MERCURE_JWT_SECRET}
+    depends_on:
+      - mercure
+    networks:
+      - smart_building
+
+  mercure:
+    container_name: '${APP_NAME}_mercure'
+    image: dunglas/mercure:latest
+    command: /usr/bin/caddy run --config /etc/caddy/Caddyfile.dev
+    restart: unless-stopped
+    environment:
+      SERVER_NAME: ':80'
+      MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_PUBLISHER_JWT_KEY}
+      MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_SUBSCRIBER_JWT_KEY}
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins *
+    ports:
+      - "${PORT1}:80"
+      - "${PORT2}:443"
+    volumes:
+      - ./docker/mercure/data:/data
+      - ./docker/mercure/config:/config
+    networks:
+      - smart_building
+
+  caddy:
+    container_name: '${APP_NAME}_backend_caddy'
+    image: nabilbs/smartbuilding-backend-caddy:latest
+    # build:
+    #   context: .
+    #   target: app_caddy
+    depends_on:
+      - php
+    environment:
+      SERVER_NAME: ${SERVER_NAME}
+      MERCURE_PUBLISHER_JWT_KEY: ${MERCURE_PUBLISHER_JWT_KEY}
+      MERCURE_SUBSCRIBER_JWT_KEY: ${MERCURE_SUBSCRIBER_JWT_KEY}
+    restart: unless-stopped
+    volumes:
+      - php_socket:/var/run/php
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - target: 80
+        published: ${HTTP_PORT}
+        protocol: tcp
+      - target: 443
+        published: ${HTTPS_PORT}
+        protocol: tcp
+      - target: 443
+        published: ${HTTP3_PORT}
+        protocol: udp
+    networks:
+      - smart_building
+
+  db_admin:
+    container_name: '${APP_NAME}_db_admin'
+    image: phpmyadmin:latest
+    depends_on:
+      - database
+    restart: always
+    ports:
+      - '${APP_DB_ADMIN_PORT}:80'
+    environment:
+      PMA_HOST: database
+    networks:
+      - smart_building
+
+  database:
+    image: 'mariadb:latest'
+    container_name: '${APP_NAME}_db_server'
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: '${MYSQL_ROOT_PASS}'
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASS}
+      MYSQL_DATABASE: ${MYSQL_DB}
+    volumes:
+      - database_data:/var/lib/mysql
+    ports:
+      - '${DB_PORT}:3306'
+    networks:
+      - smart_building
+
+volumes:
+  php_socket:
+  caddy_data:
+  caddy_config:
+  database_data:
+
+networks:
+  smart_building:

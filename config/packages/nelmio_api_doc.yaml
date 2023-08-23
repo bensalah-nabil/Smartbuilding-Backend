@@ -1,0 +1,14 @@
+nelmio_api_doc:
+    models:
+        names:
+            - { alias: Get_Equipments, type: App\Entity\Equipement, groups: [ 'equipement','salle','reservations:salle'] }
+
+    documentation:
+        info:
+            title: My App
+            description: This is an awesome app!
+            version: 1.0.0
+
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc

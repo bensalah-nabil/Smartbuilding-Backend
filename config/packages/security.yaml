@@ -1,0 +1,54 @@
+security:
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: uuid
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            provider: app_user_provider
+            access_denied_handler: App\Security\AccessDeniedHandler
+            custom_authenticator: App\Security\UserAuthenticator
+            
+    access_control:
+
+        # - { path: ^/api/v1/users/current, roles: ROLE_USER, methods: GET }
+        # - { path: ^/api/v1/equipements, roles: ROLE_USER, methods: GET }
+        # - { path: ^/api/v1/incident, roles: ROLE_USER, methods: GET }
+        # - { path: ^/api/v1/menus, roles: ROLE_USER, methods: GET }
+        # - { path: ^/api/v1/repasParJour, roles: ROLE_USER, methods: GET }
+        # - { path: ^/api/v1/salles, roles: ROLE_USER, methods: GET }
+
+        # - { path: ^/api/v1/foods, roles: ROLE_COLLABORATOR, methods: GET }
+        # - { path: ^/api/v1/equipements, roles: ROLE_COLLABORATOR, methods: GET }
+        # - { path: ^/api/v1/incident, roles: ROLE_COLLABORATOR, methods: GET }
+        # - { path: ^/api/v1/incident/update, roles: ROLE_COLLABORATOR, methods: POST }
+        # - { path: ^/api/v1/menus, roles: ROLE_COLLABORATOR, methods: GET }
+        # - { path: ^/api/v1/repasParJour, roles: ROLE_COLLABORATOR, methods: GET }
+        # - { path: ^/api/v1/reservationCantine, roles: ROLE_COLLABORATOR, methods: GET }
+        # - { path: ^/api/v1/reservationRepas, roles: ROLE_COLLABORATOR, methods: GET }
+        # - { path: ^/api/v1/reservationSalle, roles: ROLE_COLLABORATOR, methods: GET }
+        # - { path: ^/api/v1/salles, roles: ROLE_COLLABORATOR, methods: GET }
+        # - { path: '^/api/v1/user/cancelCantine/{id}', roles: ROLE_COLLABORATOR, methods: POST }
+        # - { path: '^/api/v1/user/confirmCantine/{id}', roles: ROLE_COLLABORATOR, methods: POST }
+        # - { path: '^/api/v1/user/cancelSalle/{id}', roles: ROLE_COLLABORATOR, methods: POST }
+        # - { path: '^/api/v1/user/confirmSalle/{id}', roles: ROLE_COLLABORATOR, methods: POST }
+
+        # - { path: ^/api/v1/foods, roles: ROLE_RESP_CANTINE, methods: [GET, POST, DELETE] }
+        # - { path: ^/api/v1/foods/update, roles: ROLE_RESP_CANTINE, methods: POST }
+        # - { path: ^/api/v1/menus, roles: ROLE_RESP_CANTINE, methods: [GET, POST, DELETE] }
+        # - { path: ^/api/v1/repasParJour, roles: ROLE_RESP_CANTINE, methods: [GET, POST, DELETE] }
+        # - { path: ^/api/v1/reservationCantine, roles: ROLE_RESP_CANTINE, methods: GET }
+        # - { path: ^/api/v1/reservationRepas, roles: ROLE_RESP_CANTINE, methods: GET }
+
+        # - { path: ^/api/v1/incident, roles: ROLE_RESP_MAINTENANCE, methods: [GET, POST, DELETE] }
+        # - { path: ^/api/v1/incident/update, roles: ROLE_RESP_MAINTENANCE, methods: POST }
+
+        # - { path: ^/api/v1/users, roles: ROLE_ADMIN, methods: [GET, POST]}
+
+

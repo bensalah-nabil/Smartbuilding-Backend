@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "Pizza",
+    "category": "Italian",
+    "price": 10.0,
+    "image":"/uploads/foods/exemple1.jpg"
+  },
+  {
+    "id": 2,
+    "name": "Burger",
+    "category": "American",
+    "price": 8.0,
+    "image":"/uploads/foods/exemple2.jpg"
+  }
+]

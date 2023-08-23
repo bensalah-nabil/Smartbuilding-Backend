@@ -1,0 +1,99 @@
+pipeline {
+    environment {
+        DOCKER_IMAGE1 = "nabilbs/smartbuilding-backend-php:${BUILD_NUMBER}"
+        DOCKER_IMAGE2 = "nabilbs/smartbuilding-backend-caddy:${BUILD_NUMBER}"
+
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+    }
+    agent any
+
+    stages {
+
+        stage('Install Dependencies') {
+            steps {
+                // sh 'cp .env.local .env'
+                sh 'composer install '
+            }
+        }
+
+        stage('Static analysis') {
+            steps {
+                echo "======STATIC ANALYSIS======="
+                // sh 'composer cs-fix'
+                // sh 'composer cs-analyse'
+                // sh 'composer phpmd-analyse'
+                // sh 'composer pm-fix'
+                }
+            }
+           
+        stage("Functional test"){
+            steps{
+                echo "======Functional TEST======="
+                sh 'php vendor/bin/codecept run tests/Api/ || true'
+            }
+        }
+        stage('Publish HTML Report') {
+            steps {
+                publishHTML([
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: false,
+                    reportDir: 'coverage',
+                    reportFiles: 'index.html',
+                    reportName: 'Code Coverage Report',
+                    reportTitles: 'Code Coverage',
+                    useWrapperFileDirectly: true
+                ])
+            }
+        }
+
+        stage('Sonarqube Analysis') {
+            environment {
+                SONARQUBE_PROJECT_KEY = "symfonyAnlyse"
+                SCANNER_HOME = tool 'sonar-scanner'
+            }
+            steps {
+                echo "======SONARQUBE========="
+                withSonarQubeEnv('sonar-server') {
+                    sh """
+                        ${SCANNER_HOME}/bin/sonar-scanner \\
+                        -D sonar.login=admin \\
+                        -D sonar.password=avc151219 \\
+                        -D sonar.projectKey=${SONARQUBE_PROJECT_KEY} \\
+                        -D sonar.sources=./src \\
+                        -Dsonar.genericcoverage.reportVersion=1\
+                    """
+                }
+            }
+        }
+
+        stage('Build Docker Image'){
+            steps{
+                echo "====BUILD DOCKER IMAGE====="
+                sh ' ls'
+                sh 'docker-compose build'
+            }
+        }
+
+        stage("Push Image To DockerHub"){
+            steps{
+                echo "====PUSH DOCKER IMAGE===="
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                
+                sh 'docker tag smartbuilding-backend-php $DOCKER_IMAGE1'
+                sh 'docker push $DOCKER_IMAGE1'
+                
+                sh 'docker tag smartbuilding-backend-caddy $DOCKER_IMAGE2'
+                sh 'docker push $DOCKER_IMAGE2'
+                }
+            }
+        }
+   post {
+        always {
+            sh 'docker rmi $DOCKER_IMAGE1 '
+            sh 'docker rmi $DOCKER_IMAGE1 '
+
+            sh 'docker logout'
+        }
+    }
+}

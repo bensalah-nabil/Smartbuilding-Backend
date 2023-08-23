@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+    {# The following block configures Mercure on the Frontend #}
+    <script>
+        {# Notfication tji lel responsablle  #}
+        {# Notification Controller  #}
+        const eventSource = new EventSource("{{ mercure('demo-topic') }}");
+        eventSource.onmessage = event => {
+            // Will be called every time an update is published by the server
+            // console.log(JSON.parse(event.data));
+            const json = JSON.parse(event.data);
+            const data = JSON.stringify(json)
+            $('#mercure-body').text(data);
+        }
+    </script>
+
+    {# The following block triggers an AJAX event to publish events into Mercure #}
+    <script>
+
+        {# Kif ydeclari chkoun incident  #}
+        {# Ajouter Incident Conroller #}
+
+        $('.btn-primary').click(() => {
+            $.ajax('{{ url('publish') }}', {
+                'method': 'GET',
+                'success': (data) => { $('#symfony-body').text(data); },
+            })
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="row mt-5">
+        <div class="col-6">
+
+            <div class="card">
+                <div class="card-header"><b>Symfony Request</b></div>
+                <div class="card-body" id="symfony-body">Click the button below to publish an event into Mercure.</div>
+                <div class="card-footer">
+                    <button class="btn btn-primary btn-sm" role="button">Publish now</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header"><b>Mercure Event</b></div>
+                <div class="card-body" id="mercure-body">No events processed...</div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
