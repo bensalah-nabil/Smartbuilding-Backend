@@ -12,7 +12,3 @@ down:
 ps:
 
 	sudo docker-compose ps
-
-bash:
-
-#	sudo docker-compose exec smartbuilding-backend-php-1 bash
