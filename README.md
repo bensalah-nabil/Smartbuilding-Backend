@@ -2,7 +2,7 @@
 
 
 ```sh
-sudo docker compose up
+make up
 ```
 
 ```sh
