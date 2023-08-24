@@ -6,13 +6,5 @@ sudo docker compose up
 ```
 
 ```sh
-sudo docker exec -it smart_building_backend sh
-```
-
-```sh
-php bin/console make:migration
-```
-
-```sh
-php bin/console doctrine:migrations:migrate
+make migration
 ```
