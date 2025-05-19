@@ -14,3 +14,5 @@ data:
   APP_DB_ADMIN_PORT: "8081"
   DB_PORT: "3306"
   MYSQL_DB: "smartbuilding"
+  DATABASE_HOST: "database-service.smartbuilding-ns.svc.cluster.local"
+  DATABASE_PORT: "3306"
