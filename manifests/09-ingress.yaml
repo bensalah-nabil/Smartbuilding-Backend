@@ -40,3 +40,10 @@ spec:
             name: phpmyadmin-service
             port:
               number: 80
+      - path: /caddy
+        pathtype: Prefix
+        backend:
+          service:
+            name: caddy-service
+            port:
+              number: 80
