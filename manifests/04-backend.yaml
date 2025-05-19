@@ -18,6 +18,9 @@ spec:
         image: nabilbs/smartbuilding-backend-php:latest
         ports:
         - containerPort: 9000
+        env:
+        - name: DATABASE_URL
+          value: "mysql://$(MYSQL_USER):$(MYSQL_PASS)@database-service.smartbuilding-ns.svc.cluster.local:3306/smartbuilding?serverVersion=mariadb-10.11.7"
         envFrom:
         - configMapRef:
             name: app-config
